@@ -1,13 +1,13 @@
 /**
  * ****************************************************************************
  * Copyright 2011, 2012 Chris Banes.
- * <p>
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,8 +35,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-
-import com.chensl.customview.MyLog;
 
 import java.lang.ref.WeakReference;
 
@@ -85,12 +83,13 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private OnViewTapListener mViewTapListener;
     private OnLongClickListener mLongClickListener;
     private OnScaleChangeListener mScaleChangeListener;
+    private OnViewRotateListener mOnViewRotateListener;
     private int mIvTop, mIvRight, mIvBottom, mIvLeft;
     private FlingRunnable mCurrentFlingRunnable;
     private int mScrollEdge = EDGE_BOTH;
     private boolean mZoomEnabled;
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
-    private boolean mIsEnableRotate = true;
+    private boolean mIsEnableRotate = false;
     private int mPivotX, mPivotY;
     private int mLastAngle = 0;
     private int mChangeDegrees = 0;
@@ -248,6 +247,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         mMatrixChangeListener = null;
         mPhotoTapListener = null;
         mViewTapListener = null;
+        mOnViewRotateListener = null;
 
         // Finally, clear ImageView
         mImageView = null;
@@ -602,24 +602,26 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             case MotionEvent.ACTION_POINTER_DOWN:
                 mLastAngle = degrees;
                 downDegree = degrees;
-                MyLog.e("degrees:" + (degrees));
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                //Mark the initial angle
                 int upDegree = degrees - downDegree;
-                MyLog.e("upDegree:" + upDegree);
+                //Mark the initial angle
                 mLastAngle = degrees;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if ((degrees - mLastAngle) > 45) {
+                int degreesValue = degrees - mLastAngle;
+                if (degreesValue > 45) {
                     //Going CCW across the boundary
                     mSuppMatrix.postRotate(-5, mPivotX, mPivotY);
-                } else if ((degrees - mLastAngle) < -45) {
+                } else if (degreesValue < -45) {
                     //Going CW across the boundary
                     mSuppMatrix.postRotate(5, mPivotX, mPivotY);
                 } else {
                     //Normal rotation, rotate the difference
-                    mSuppMatrix.postRotate(degrees - mLastAngle, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(degreesValue, mPivotX, mPivotY);
+                }
+                if (mOnViewRotateListener == null) {
+                    mOnViewRotateListener.onRotate(degreesValue);
                 }
                 //Post the rotation to the image
                 checkAndDisplayMatrix();
@@ -660,6 +662,11 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     @Override
     public void setOnPhotoTapListener(OnPhotoTapListener listener) {
         mPhotoTapListener = listener;
+    }
+
+    @Override
+    public void setOnViewRotateListener(OnViewRotateListener onViewRotateListener) {
+        mOnViewRotateListener = onViewRotateListener;
     }
 
     @Override
@@ -1066,6 +1073,21 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
          * @param y    - where the user tapped from the top of the View.
          */
         void onViewTap(View view, float x, float y);
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when the ImageView is roateted with two finger.
+     *
+     * @author ChenSL
+     */
+    public static interface OnViewRotateListener {
+        /**
+         * A callBack to receive when the user rotate a ImageView.You will receive a callback
+         * if the user rotate the ImageView
+         *
+         * @param degree
+         */
+        void onRotate(int degree);
     }
 
     private class AnimatedZoomRunnable implements Runnable {

@@ -9,7 +9,7 @@ import android.util.Log;
  */
 public final class MyLog {
 
-    private static final String TAG = "photoview";
+    private static final String TAG = "com/chensl/rotatephotoview/photoview";
     private static final boolean ENABLE_INFO = true;
     private static final boolean ENABLE_ERROR = true;
     private static final boolean ENABLE_DEBUG = true;
