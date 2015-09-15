@@ -38,7 +38,8 @@ public class PhotoViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         PhotoView photoView = (PhotoView) view.findViewById(R.id.photoview);
-        PhotoViewAttacher mAttacher = new PhotoViewAttacher(photoView);
-        mAttacher.update();
+        photoView.setRotatable(true);
+        PhotoViewAttacher attacher = new PhotoViewAttacher(photoView);
+        attacher.update();
     }
 }
