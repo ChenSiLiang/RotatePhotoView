@@ -39,6 +39,12 @@ public class PhotoViewFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         PhotoView photoView = (PhotoView) view.findViewById(R.id.photoview);
         photoView.setRotatable(true);
+        photoView.setOnViewRotateListener(new PhotoViewAttacher.OnViewRotateListener() {
+            @Override
+            public void onRotate(int degree) {
+                //do something
+            }
+        });
         PhotoViewAttacher attacher = new PhotoViewAttacher(photoView);
         attacher.update();
     }
