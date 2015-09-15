@@ -1085,7 +1085,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
          * A callBack to receive when the user rotate a ImageView.You will receive a callback
          * if the user rotate the ImageView
          *
-         * @param degree
+         * @param degree rotate degree
          */
         void onRotate(int degree);
     }
