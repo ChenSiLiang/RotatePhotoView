@@ -132,22 +132,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                         }
                     }
                 });
-        //set rotate
-        //Modify by ChenSL on 2015 / 9 / 16.
-        if (mRotateGestureDetector == null) {
-            mRotateGestureDetector = new RotateGestureDetector();
-            mRotateGestureDetector.setRotateListener(new IRotateListener() {
-                @Override
-                public void rotate(int degree) {
-                    mSuppMatrix.postRotate(degree, mPivotX, mPivotY);
-                    if (mOnRotateListener != null) {
-                        mOnRotateListener.onRotate(degree);
-                    }
-                    //Post the rotation to the image
-                    checkAndDisplayMatrix();
-                }
-            });
-        }
+        //modify by ChenSiLiang
+        setRotateGestureDetector();
 
         mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
 
@@ -203,6 +189,37 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             if (!ScaleType.MATRIX.equals(imageView.getScaleType())) {
                 imageView.setScaleType(ScaleType.MATRIX);
             }
+        }
+    }
+
+    /**
+     * set rotate
+     * Modify by ChenSL on 2015 / 9 / 16.
+     */
+    private void setRotateGestureDetector() {
+        if (mRotateGestureDetector == null) {
+            mRotateGestureDetector = new RotateGestureDetector();
+            mRotateGestureDetector.setRotateListener(new IRotateListener() {
+                @Override
+                public void rotate(int degree) {
+                    mSuppMatrix.postRotate(degree, mPivotX, mPivotY);
+                    if (mOnRotateListener != null) {
+                        mOnRotateListener.onRotate(degree);
+                    }
+                    //Post the rotation to the image
+                    checkAndDisplayMatrix();
+                }
+
+                @Override
+                public void upRotate() {
+                    float[] v = new float[9];
+                    mSuppMatrix.getValues(v);
+                    // calculate the degree of rotation
+                    float angle = Math.round(Math.atan2(v[Matrix.MSKEW_X], v[Matrix.MSCALE_X]) * (180 / Math.PI)) + 180;
+                    UpRotationRunnable runnable = new UpRotationRunnable((int) angle);
+                    getImageView().post(runnable);
+                }
+            });
         }
     }
 
@@ -584,10 +601,9 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                     break;
             }
 
+            //detect the rotation
             if (mIsEnableRotate && ev.getPointerCount() == 2) {
-                //do the rotate with two finger
                 mRotateGestureDetector.onTouchEvent(ev);
-//                doRotate(ev);
             }
 
             // Try the Scale/Drag detector
@@ -613,51 +629,6 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         return handled;
     }
 
-    private void doRotate(MotionEvent ev) {
-        //Calculate the angle between the two fingers
-
-        float deltaX = ev.getX(0) - ev.getX(1);
-        float deltaY = ev.getY(0) - ev.getY(1);
-        double radians = Math.atan(deltaY / deltaX);
-        //Convert to degrees
-        int degrees = (int) (radians * 180 / Math.PI);
-
-        /*
-         * Must use getActionMasked() for switching to pick up pointer events.
-         * These events have the pointer index encoded in them so the return
-         * from getAction() won't match the exact action constant.
-         */
-        switch (ev.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastAngle = degrees;
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                mLastAngle = degrees;
-                downDegree = degrees;
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                int upDegree = degrees - downDegree;
-                //Mark the initial angle
-                mLastAngle = degrees;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int degreesValue = degrees - mLastAngle;
-                if (degreesValue > 45) {
-                    //Going CCW across the boundary
-                    mSuppMatrix.postRotate(-5, mPivotX, mPivotY);
-                } else if (degreesValue < -45) {
-                    //Going CW across the boundary
-                    mSuppMatrix.postRotate(5, mPivotX, mPivotY);
-                } else {
-                    //Normal rotation, rotate the difference
-
-                }
-
-                //Save the current angle
-                mLastAngle = degrees;
-                break;
-        }
-    }
 
     @Override
     public void setAllowParentInterceptOnEdge(boolean allow) {
@@ -1113,7 +1084,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
          * A callBack to receive when the user rotate a ImageView.You will receive a callback
          * if the user rotate the ImageView
          *
-         * @param degree rotate degree
+         * @param degree rotate mOldDegree
          */
         void onRotate(int degree);
     }
@@ -1245,6 +1216,30 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                 mCurrentY = newY;
 
                 // Post On animation
+                Compat.postOnAnimation(imageView, this);
+            }
+        }
+    }
+
+    private class UpRotationRunnable implements Runnable {
+        private int mOldDegree;
+        private int mToDegree;
+
+        public UpRotationRunnable(int degree) {
+            this.mOldDegree = degree;
+            this.mToDegree = calDegree(degree);
+        }
+
+        private int calDegree(int oldDegree) {
+            return 0;
+        }
+
+        @Override
+        public void run() {
+            if (mOldDegree <= mToDegree) {
+                ImageView imageView = getImageView();
+                mOldDegree++;
+                mSuppMatrix.postRotate(mOldDegree, mPivotX, mPivotY);
                 Compat.postOnAnimation(imageView, this);
             }
         }
