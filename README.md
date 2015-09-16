@@ -3,9 +3,12 @@ Adding **Rotation with two finger function**  on [PhotoView](https://github.com/
 
 #Usage
 ##in code
-just as `PhotoView`,you need to enable rotation, by default it's **false**.
+you need to enable rotation, by default it's **false**.
 
-	photoView.setRotatable(true);
+other functions just as `PhotoView`.
+
+	PhotoViewAttacher attacher = new PhotoViewAttacher(mImageView);
+	attacher.setRotatable(true);
 	//set rotate listener
 	photoView.setOnViewRotateListener(new PhotoViewAttacher.OnViewRotateListener() {
         @Override
@@ -13,6 +16,14 @@ just as `PhotoView`,you need to enable rotation, by default it's **false**.
              //do something
         }
     });
+
+don't forget to **clear** when leave
+
+	@Override
+    public void onDestroyView() {
+        attacher.cleanup();
+        super.onDestroyView();
+    }
 ##in xml
 	 <uk.co.senab.photoview.PhotoView
         android:id="@+id/photoview"
@@ -21,7 +32,11 @@ just as `PhotoView`,you need to enable rotation, by default it's **false**.
         android:src="@drawable/ic_bg" />
 
 #with Volley
-let the `Photo` extends `Volley.NetworkImageView` instead of `ImageView`.
+let the `PhotoView` extends `Volley.NetworkImageView` instead of `ImageView`.
+
+#Gradle
+coming very soon. :)
+
 #License
 	Copyright 2011, 2012 Chris Banes
 	
