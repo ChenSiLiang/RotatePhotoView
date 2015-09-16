@@ -16,7 +16,7 @@ public class RotateGestureDetector implements IRotateDetector {
      *
      * @param listener a  rotation listener
      */
-    public void setListener(IRotateListener listener) {
+    public void setRotateListener(IRotateListener listener) {
         this.mListener = listener;
     }
 
