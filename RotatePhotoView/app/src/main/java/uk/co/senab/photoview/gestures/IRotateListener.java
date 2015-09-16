@@ -11,4 +11,12 @@ public interface IRotateListener {
      * @param degree degree of rotation
      */
     void rotate(int degree);
+
+    /**
+     * MotionEvent.ACTION_POINTER_UP happens when two finger minus to only one
+     * change the ImageView to 0,90,180,270
+     *
+     * @param upDegree imageview's degree when finger up
+     */
+    void upRotate();
 }

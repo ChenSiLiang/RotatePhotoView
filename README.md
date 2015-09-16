@@ -1,6 +1,12 @@
 # RotatePhotoView
 Adding **Rotation with two finger function**  on [PhotoView](https://github.com/search?utf8=%E2%9C%93&q=PhotoView)
 
+#Set Up
+##jar
+download the `RotatePhotoView.jar` and add to your project.
+##Gradle
+coming very soon. :)
+
 #Usage
 ##in code
 you need to enable rotation, by default it's **false**.
@@ -28,14 +34,11 @@ don't forget to **clear** when leave,for example.
 	 <uk.co.senab.photoview.PhotoView
         android:id="@+id/photoview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_bg" />
+        android:layout_height="wrap_content" />
 
 #with Volley
 let the `PhotoView` extends `Volley.NetworkImageView` instead of `ImageView`.
 
-#Gradle
-coming very soon. :)
 
 #License
 	Copyright 2011, 2012 Chris Banes

@@ -8,7 +8,6 @@ import android.view.MotionEvent;
  */
 public class RotateGestureDetector implements IRotateDetector {
     private int mLastAngle = 0;
-    private int mDownDegree;
     private IRotateListener mListener;
 
     /**
@@ -33,13 +32,11 @@ public class RotateGestureDetector implements IRotateDetector {
      */
     private boolean doRotate(MotionEvent ev) {
         //Calculate the angle between the two fingers
-
         float deltaX = ev.getX(0) - ev.getX(1);
         float deltaY = ev.getY(0) - ev.getY(1);
         double radians = Math.atan(deltaY / deltaX);
         //Convert to degrees
         int degrees = (int) (radians * 180 / Math.PI);
-
         /*
          * Must use getActionMasked() for switching to pick up pointer events.
          * These events have the pointer index encoded in them so the return
@@ -49,13 +46,13 @@ public class RotateGestureDetector implements IRotateDetector {
             case MotionEvent.ACTION_DOWN:
                 mLastAngle = degrees;
                 break;
+            case MotionEvent.ACTION_UP:
+                break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 mLastAngle = degrees;
-                mDownDegree = degrees;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                int upDegree = degrees - mDownDegree;
-                //Mark the initial angle
+                upRotate();
                 mLastAngle = degrees;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -85,6 +82,15 @@ public class RotateGestureDetector implements IRotateDetector {
     private void rotate(int degree) {
         if (mListener != null) {
             mListener.rotate(degree);
+        }
+    }
+
+    /**
+     * to invoke the finger up action
+     */
+    private void upRotate() {
+        if (mListener != null) {
+            mListener.upRotate();
         }
     }
 }
