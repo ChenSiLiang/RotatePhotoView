@@ -11,8 +11,11 @@ import com.chensl.rotatephotoview.R;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-
+/**
+ * single RotatePhototView Demo
+ */
 public class PhotoViewFragment extends Fragment {
+    private PhotoViewAttacher mAttacher;
 
     public PhotoViewFragment() {
         // Required empty public constructor
@@ -38,14 +41,19 @@ public class PhotoViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         PhotoView photoView = (PhotoView) view.findViewById(R.id.photoview);
-        photoView.setRotatable(true);
+        mAttacher = new PhotoViewAttacher(photoView);
+        mAttacher.setRotatable(true);
         photoView.setOnViewRotateListener(new PhotoViewAttacher.OnViewRotateListener() {
             @Override
             public void onRotate(int degree) {
                 //do something
             }
         });
-        PhotoViewAttacher attacher = new PhotoViewAttacher(photoView);
-        attacher.update();
+    }
+
+    @Override
+    public void onDestroyView() {
+        mAttacher.cleanup();
+        super.onDestroyView();
     }
 }
