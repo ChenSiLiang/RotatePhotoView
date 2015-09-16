@@ -5,7 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.chensl.rotatephotoview.MyLog;
 import com.chensl.rotatephotoview.R;
 
 import uk.co.senab.photoview.PhotoView;
@@ -14,15 +16,16 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 /**
  * single RotatePhototView Demo
  */
-public class PhotoViewFragment extends Fragment {
+public class SinglePhotoViewFragment extends Fragment {
+    PhotoView photoView;
     private PhotoViewAttacher mAttacher;
 
-    public PhotoViewFragment() {
+    public SinglePhotoViewFragment() {
         // Required empty public constructor
     }
 
-    public static PhotoViewFragment newInstance() {
-        PhotoViewFragment fragment = new PhotoViewFragment();
+    public static SinglePhotoViewFragment newInstance() {
+        SinglePhotoViewFragment fragment = new SinglePhotoViewFragment();
         return fragment;
     }
 
@@ -35,18 +38,26 @@ public class PhotoViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_photoview, container, false);
+        return inflater.inflate(R.layout.fragment_single, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        PhotoView photoView = (PhotoView) view.findViewById(R.id.photoview);
+        photoView = (PhotoView) view.findViewById(R.id.photoview);
         mAttacher = new PhotoViewAttacher(photoView);
         mAttacher.setRotatable(true);
-        photoView.setOnViewRotateListener(new PhotoViewAttacher.OnViewRotateListener() {
+        photoView.setOnRotateListener(new PhotoViewAttacher.OnRotateListener() {
             @Override
             public void onRotate(int degree) {
                 //do something
+            }
+        });
+        Button resetBtn = (Button) view.findViewById(R.id.reset_btn);
+        resetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyLog.e("reset!");
+                photoView.reset();
             }
         });
     }

@@ -2,9 +2,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/reset_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/reset_button_text" />
+
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/photoview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/reset_btn"
         android:src="@drawable/ic_bg" />
 </RelativeLayout>

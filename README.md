@@ -17,12 +17,12 @@ other functions just as `PhotoView`.
         }
     });
 
-don't forget to **clear** when leave
+don't forget to **clear** when leave,for example.
 
 	@Override
-    public void onDestroyView() {
+    public void onDestroy() {
         attacher.cleanup();
-        super.onDestroyView();
+        super.onDestroy();
     }
 ##in xml
 	 <uk.co.senab.photoview.PhotoView

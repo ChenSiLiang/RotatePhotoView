@@ -3,4 +3,10 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="reset_button_text">reset degree</string>
+    <!--fragment-->
+    <string name="fragment_single">SinglePhotoViewFragment</string>
+    <string name="action_single">View Single</string>
+    <string name="fragment_viewpager">ViewPagerPhotoViewFragment</string>
+    <string name="action_viewpager">View ViewPager</string>
 </resources>
