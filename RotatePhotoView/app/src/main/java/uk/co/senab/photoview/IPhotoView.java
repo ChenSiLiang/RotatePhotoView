@@ -356,6 +356,10 @@ public interface IPhotoView {
      */
     void setOnScaleChangeListener(PhotoViewAttacher.OnScaleChangeListener onScaleChangeListener);
 
-
+    /**
+     * Allows you to enable/disable the Rotation functionality on the ImageView.
+     *
+     * @param isRotatable true,enable;
+     */
     void setRotatable(boolean isRotatable);
 }

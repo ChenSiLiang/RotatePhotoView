@@ -38,7 +38,9 @@ import android.widget.ImageView.ScaleType;
 
 import java.lang.ref.WeakReference;
 
+import uk.co.senab.photoview.gestures.IRotateListener;
 import uk.co.senab.photoview.gestures.OnGestureListener;
+import uk.co.senab.photoview.gestures.RotateGestureDetector;
 import uk.co.senab.photoview.gestures.VersionedGestureDetector;
 import uk.co.senab.photoview.log.LogManager;
 import uk.co.senab.photoview.scrollerproxy.ScrollerProxy;
@@ -77,6 +79,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     // Gesture Detectors
     private GestureDetector mGestureDetector;
     private uk.co.senab.photoview.gestures.GestureDetector mScaleDragDetector;
+    private RotateGestureDetector mRotateGestureDetector;
     // Listeners
     private OnMatrixChangedListener mMatrixChangeListener;
     private OnPhotoTapListener mPhotoTapListener;
@@ -89,7 +92,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private int mScrollEdge = EDGE_BOTH;
     private boolean mZoomEnabled;
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
-    private boolean mIsEnableRotate = false;
+    private boolean mIsEnableRotate;
     private int mPivotX, mPivotY;
     private int mLastAngle = 0;
     private int mChangeDegrees = 0;
@@ -129,6 +132,19 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                         }
                     }
                 });
+
+        mRotateGestureDetector = new RotateGestureDetector();
+        mRotateGestureDetector.setListener(new IRotateListener() {
+            @Override
+            public void rotate(int degree) {
+                mSuppMatrix.postRotate(degree, mPivotX, mPivotY);
+                if (mOnViewRotateListener != null) {
+                    mOnViewRotateListener.onRotate(degree);
+                }
+                //Post the rotation to the image
+                checkAndDisplayMatrix();
+            }
+        });
 
         mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
 
@@ -205,6 +221,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     public void setRotatable(boolean isRotatable) {
         mIsEnableRotate = isRotatable;
     }
+
 
     @Override
     public boolean canZoom() {
@@ -555,7 +572,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
             if (mIsEnableRotate && ev.getPointerCount() == 2) {
                 //do the rotate with two finger
-                doRotate(ev);
+                mRotateGestureDetector.onTouchEvent(ev);
+//                doRotate(ev);
             }
 
             // Try the Scale/Drag detector
@@ -618,13 +636,9 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                     mSuppMatrix.postRotate(5, mPivotX, mPivotY);
                 } else {
                     //Normal rotation, rotate the difference
-                    mSuppMatrix.postRotate(degreesValue, mPivotX, mPivotY);
+
                 }
-                if (mOnViewRotateListener == null) {
-                    mOnViewRotateListener.onRotate(degreesValue);
-                }
-                //Post the rotation to the image
-                checkAndDisplayMatrix();
+
                 //Save the current angle
                 mLastAngle = degrees;
                 break;
@@ -924,6 +938,12 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         }
     }
 
+    private int getImageViewWidth(ImageView imageView) {
+        if (null == imageView)
+            return 0;
+        return imageView.getWidth() - imageView.getPaddingLeft() - imageView.getPaddingRight();
+    }
+
     /**
      * Calculate Matrix for FIT_CENTER
      *
@@ -989,12 +1009,6 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         }
 
         resetMatrix();
-    }
-
-    private int getImageViewWidth(ImageView imageView) {
-        if (null == imageView)
-            return 0;
-        return imageView.getWidth() - imageView.getPaddingLeft() - imageView.getPaddingRight();
     }
 
     private int getImageViewHeight(ImageView imageView) {
