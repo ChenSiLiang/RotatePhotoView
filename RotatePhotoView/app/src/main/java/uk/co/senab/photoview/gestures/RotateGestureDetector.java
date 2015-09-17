@@ -31,6 +31,9 @@ public class RotateGestureDetector implements IRotateDetector {
      * @return always true.
      */
     private boolean doRotate(MotionEvent ev) {
+        if (ev.getPointerCount() != 2) {
+            return false;
+        }
         //Calculate the angle between the two fingers
         float deltaX = ev.getX(0) - ev.getX(1);
         float deltaY = ev.getY(0) - ev.getY(1);

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.chensl.rotatephotoview.MyLog;
 import com.chensl.rotatephotoview.R;
 
 import uk.co.senab.photoview.PhotoView;
@@ -46,6 +45,7 @@ public class SinglePhotoViewFragment extends Fragment {
         photoView = (PhotoView) view.findViewById(R.id.photoview);
         mAttacher = new PhotoViewAttacher(photoView);
         mAttacher.setRotatable(true);
+        mAttacher.setToRightAngle(true);
         photoView.setOnRotateListener(new PhotoViewAttacher.OnRotateListener() {
             @Override
             public void onRotate(int degree) {
@@ -56,7 +56,6 @@ public class SinglePhotoViewFragment extends Fragment {
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyLog.e("reset!");
                 photoView.reset();
             }
         });
