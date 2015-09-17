@@ -36,6 +36,8 @@ import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.chensl.rotatephotoview.MyLog;
+
 import java.lang.ref.WeakReference;
 
 import uk.co.senab.photoview.gestures.IRotateListener;
@@ -818,6 +820,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         float deltaX = 0, deltaY = 0;
 
         final int viewHeight = getImageViewHeight(imageView);
+
         if (height <= viewHeight) {
             switch (mScaleType) {
                 case FIT_START:
@@ -1248,12 +1251,13 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      * a mRightAngleRunnable that finger lift rotate to 0,90,180,270 degree
      */
     private class RightAngleRunnable implements Runnable {
-        private static final int RECOVER_SPEED = 1;
+        private static final int RECOVER_SPEED = 4;
         private int mOldDegree;
         private int mNeedToRotate;
 
         public RightAngleRunnable(int degree) {
             this.mOldDegree = degree;
+            MyLog.e("mOldDegree:" + mOldDegree);
             mNeedToRotate = calDegree(degree) - mOldDegree;
         }
 
@@ -1265,17 +1269,17 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
          */
         private int calDegree(int oldDegree) {
             int result = 0;
-            int n = oldDegree / 45;
+            float n = (float) oldDegree / 45;
             if (n >= 0 && n < 1) {
                 result = 0;
-            } else if (n >= 1 && n <= 2) {
+            } else if (n >= 1 && n <= 2.5) {
                 result = 90;
-            } else if (n > 2 && n < 5) {
+            } else if (n > 2.5 && n < 5.5) {
                 result = 180;
-            } else if (n >= 5 && n <= 7) {
+            } else if (n >= 5.5 && n <= 7) {
                 result = 270;
             } else {
-                result = 0;
+                result = 360;
             }
             return result;
         }
@@ -1294,12 +1298,22 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mIsToRighting = true;
             if (mNeedToRotate > 0) {
                 //Clockwise rotation
-                mNeedToRotate -= RECOVER_SPEED;
-                mSuppMatrix.postRotate(RECOVER_SPEED, mPivotX, mPivotY);
+                if (mNeedToRotate >= RECOVER_SPEED) {
+                    mSuppMatrix.postRotate(RECOVER_SPEED, mPivotX, mPivotY);
+                    mNeedToRotate -= RECOVER_SPEED;
+                } else {
+                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mNeedToRotate = 0;
+                }
             } else if (mNeedToRotate < 0) {
                 //Counterclockwise rotation
-                mNeedToRotate += RECOVER_SPEED;
-                mSuppMatrix.postRotate(-RECOVER_SPEED, mPivotX, mPivotY);
+                if (mNeedToRotate <= -RECOVER_SPEED) {
+                    mSuppMatrix.postRotate(-RECOVER_SPEED, mPivotX, mPivotY);
+                    mNeedToRotate += RECOVER_SPEED;
+                } else {
+                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mNeedToRotate = 0;
+                }
             }
             checkAndDisplayMatrix();
             Compat.postOnAnimation(imageView, this);
