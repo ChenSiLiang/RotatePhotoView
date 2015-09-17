@@ -11,17 +11,25 @@ coming very soon. :)
 ##in code
 you need to enable rotation, by default it's **false**.
 
-other functions just as `PhotoView`.
-
 	PhotoViewAttacher attacher = new PhotoViewAttacher(mImageView);
 	attacher.setRotatable(true);
-	//set rotate listener
+
+set rotate listener
+
 	photoView.setOnViewRotateListener(new PhotoViewAttacher.OnViewRotateListener() {
         @Override
         public void onRotate(int degree) {
              //do something
         }
     });
+
+enable recover to `Right Angle`(0,90,180,270),by default it's **false**.
+
+    mAttacher.setToRightAngle(true);
+
+other functions just as `PhotoView`.
+
+
 
 don't forget to **clear** when leave,for example.
 
