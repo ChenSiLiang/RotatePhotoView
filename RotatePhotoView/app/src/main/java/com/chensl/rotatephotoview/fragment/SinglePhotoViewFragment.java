@@ -30,6 +30,7 @@ public class SinglePhotoViewFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 

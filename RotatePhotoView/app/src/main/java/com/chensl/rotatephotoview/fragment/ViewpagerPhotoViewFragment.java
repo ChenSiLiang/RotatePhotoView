@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chensl.rotatephotoview.R;
+import com.chensl.rotatephotoview.view.HackyViewPager;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -19,6 +20,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 public class ViewPagerPhotoViewFragment extends Fragment {
     private static final int[] sDrawables = {R.drawable.ic_bg, R.drawable.ic_bg1, R.drawable.ic_bg2,
             R.drawable.ic_bg3};
+    private static final String ISLOCKED_ARG = "isLocked";
     private ViewPager mViewPager;
     private ViewPagerAdapter mAdapter;
 
@@ -33,6 +35,11 @@ public class ViewPagerPhotoViewFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setRetainInstance(true);
+        if (savedInstanceState != null) {
+            boolean isLocked = savedInstanceState.getBoolean(ISLOCKED_ARG, false);
+            ((HackyViewPager) mViewPager).setLocked(isLocked);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -53,6 +60,18 @@ public class ViewPagerPhotoViewFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (isViewPagerActive()) {
+            outState.putBoolean(ISLOCKED_ARG, ((HackyViewPager) mViewPager).isLocked());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private boolean isViewPagerActive() {
+        return (mViewPager != null && mViewPager instanceof HackyViewPager);
     }
 
     /**
@@ -76,6 +95,7 @@ public class ViewPagerPhotoViewFragment extends Fragment {
             photoView.setImageResource(sDrawables[position]);
             PhotoViewAttacher attacher = new PhotoViewAttacher(photoView);
             attacher.setRotatable(true);
+            attacher.setToRightAngle(true);
             attacher.setOnRotateListener(new PhotoViewAttacher.OnRotateListener() {
                 @Override
                 public void onRotate(int degree) {
@@ -91,7 +111,8 @@ public class ViewPagerPhotoViewFragment extends Fragment {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
-
         }
     }
+
+
 }
