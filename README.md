@@ -44,8 +44,11 @@ don't forget to **clear** when leave,for example.
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-#with Volley
+#With Volley
 let the `PhotoView` extends `Volley.NetworkImageView` instead of `ImageView`.
+
+#Waring
+Catch `IllegalArgumentException` when working with `ViewPager`,see `HackyViewPager` for more details. 
 
 
 #License
