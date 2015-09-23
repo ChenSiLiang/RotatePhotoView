@@ -15,12 +15,12 @@ import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
- * ViewPager RotatePhototView Demo
+ * ViewPager RotatePhotoView Demo
  */
 public class ViewPagerPhotoViewFragment extends Fragment {
     private static final int[] sDrawables = {R.drawable.ic_bg, R.drawable.ic_bg1, R.drawable.ic_bg2,
             R.drawable.ic_bg3};
-    private static final String ISLOCKED_ARG = "isLocked";
+    private static final String IS_LOCKED_ARG = "isLocked";
     private ViewPager mViewPager;
     private ViewPagerAdapter mAdapter;
 
@@ -37,7 +37,7 @@ public class ViewPagerPhotoViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
         if (savedInstanceState != null) {
-            boolean isLocked = savedInstanceState.getBoolean(ISLOCKED_ARG, false);
+            boolean isLocked = savedInstanceState.getBoolean(IS_LOCKED_ARG, false);
             ((HackyViewPager) mViewPager).setLocked(isLocked);
         }
         super.onCreate(savedInstanceState);
@@ -65,7 +65,7 @@ public class ViewPagerPhotoViewFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (isViewPagerActive()) {
-            outState.putBoolean(ISLOCKED_ARG, ((HackyViewPager) mViewPager).isLocked());
+            outState.putBoolean(IS_LOCKED_ARG, ((HackyViewPager) mViewPager).isLocked());
         }
         super.onSaveInstanceState(outState);
     }
@@ -75,7 +75,7 @@ public class ViewPagerPhotoViewFragment extends Fragment {
     }
 
     /**
-     * A  adapter for ViewPager
+     * A adapter for ViewPager
      */
     private class ViewPagerAdapter extends PagerAdapter {
 
