@@ -54,6 +54,7 @@ public class RotateGestureDetector implements IRotateDetector {
             case MotionEvent.ACTION_POINTER_DOWN:
                 mLastAngle = degrees;
                 break;
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_POINTER_UP:
                 upRotate();
                 mLastAngle = degrees;
