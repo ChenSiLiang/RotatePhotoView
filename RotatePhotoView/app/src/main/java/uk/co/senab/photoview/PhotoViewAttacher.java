@@ -628,6 +628,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             if (mIsEnableRotate && ev.getPointerCount() == 2) {
                 mRotateGestureDetector.onTouchEvent(ev);
             }
+            boolean wasRotate = mRotateGestureDetector.isRotating();
 
             // Try the Scale/Drag detector
             if (null != mScaleDragDetector) {
@@ -638,8 +639,9 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
                 boolean didntScale = !wasScaling && !mScaleDragDetector.isScaling();
                 boolean didntDrag = !wasDragging && !mScaleDragDetector.isDragging();
+                boolean didnttRotate = !wasRotate && !mRotateGestureDetector.isRotating();
 
-                mBlockParentIntercept = didntScale && didntDrag;
+                mBlockParentIntercept = didntScale && didntDrag && didnttRotate;
             }
 
             // Check to see if the user double tapped
@@ -1032,7 +1034,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnMatrixChangedListener {
+    public interface OnMatrixChangedListener {
         /**
          * Callback for when the Matrix displaying the Drawable has changed. This could be because
          * the View's bounds have changed, or the user has zoomed.
@@ -1047,7 +1049,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Marek Sebera
      */
-    public static interface OnScaleChangeListener {
+    public interface OnScaleChangeListener {
         /**
          * Callback for when the scale changes
          *
@@ -1064,7 +1066,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnPhotoTapListener {
+    public interface OnPhotoTapListener {
 
         /**
          * A callback to receive where the user taps on a photo. You will only receive a callback if
@@ -1085,7 +1087,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnViewTapListener {
+    public interface OnViewTapListener {
 
         /**
          * A callback to receive where the user taps on a ImageView. You will receive a callback if
@@ -1103,7 +1105,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author ChenSL
      */
-    public static interface OnRotateListener {
+    public interface OnRotateListener {
         /**
          * A callBack to receive when the user rotate a ImageView.You will receive a callback
          * if the user rotate the ImageView
