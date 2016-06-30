@@ -1,6 +1,8 @@
 # RotatePhotoView
 Adding **Rotation with two finger function**  on [PhotoView](https://github.com/search?utf8=%E2%9C%93&q=PhotoView)
 
+![looklike](https://github.com/ChenSiLiang/RotatePhotoView/blob/master/screenshot/viewpager.gif)
+
 #Set Up
 ##jar
 download the `RotatePhotoView.jar` and add to your project.
