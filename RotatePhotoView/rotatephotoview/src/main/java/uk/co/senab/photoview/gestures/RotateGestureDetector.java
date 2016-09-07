@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 public class RotateGestureDetector implements IRotateDetector {
     private int mLastAngle = 0;
     private IRotateListener mListener;
+    private boolean mIsRotate;
 
     /**
      * set rotation listener for callback
@@ -24,6 +25,11 @@ public class RotateGestureDetector implements IRotateDetector {
         return doRotate(event);
     }
 
+    @Override
+    public boolean isRotating() {
+        return mIsRotate;
+    }
+
     /**
      * handle rotation
      *
@@ -31,6 +37,9 @@ public class RotateGestureDetector implements IRotateDetector {
      * @return always true.
      */
     private boolean doRotate(MotionEvent ev) {
+        if (ev.getPointerCount() != 2) {
+            return false;
+        }
         //Calculate the angle between the two fingers
         float deltaX = ev.getX(0) - ev.getX(1);
         float deltaY = ev.getY(0) - ev.getY(1);
@@ -45,17 +54,23 @@ public class RotateGestureDetector implements IRotateDetector {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mLastAngle = degrees;
+                mIsRotate = false;
                 break;
             case MotionEvent.ACTION_UP:
+                mIsRotate = false;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 mLastAngle = degrees;
+                mIsRotate = false;
                 break;
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_POINTER_UP:
+                mIsRotate = false;
                 upRotate();
                 mLastAngle = degrees;
                 break;
             case MotionEvent.ACTION_MOVE:
+                mIsRotate = true;
                 int degreesValue = degrees - mLastAngle;
                 if (degreesValue > 45) {
                     //Going CCW across the boundary

@@ -14,4 +14,11 @@ public interface IRotateDetector {
      * @return True if the event was handled, false otherwise.
      */
     boolean onTouchEvent(MotionEvent event);
+
+    /**
+     * is the Gesture Rotate
+     *
+     * @return true:rotating;false,otherwise
+     */
+    boolean isRotating();
 }

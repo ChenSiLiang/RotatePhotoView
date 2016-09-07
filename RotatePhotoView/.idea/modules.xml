@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RotatePhotoView.iml" filepath="$PROJECT_DIR$/RotatePhotoView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rotatephotoview/rotatephotoview.iml" filepath="$PROJECT_DIR$/rotatephotoview/rotatephotoview.iml" />
     </modules>
   </component>
 </project>

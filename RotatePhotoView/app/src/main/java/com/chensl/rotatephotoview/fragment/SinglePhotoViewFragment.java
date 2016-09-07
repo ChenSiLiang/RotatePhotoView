@@ -16,7 +16,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * single RotatePhototView Demo
  */
 public class SinglePhotoViewFragment extends Fragment {
-    PhotoView photoView;
+    private PhotoView mPhotoView;
     private PhotoViewAttacher mAttacher;
 
     public SinglePhotoViewFragment() {
@@ -24,8 +24,7 @@ public class SinglePhotoViewFragment extends Fragment {
     }
 
     public static SinglePhotoViewFragment newInstance() {
-        SinglePhotoViewFragment fragment = new SinglePhotoViewFragment();
-        return fragment;
+        return new SinglePhotoViewFragment();
     }
 
     @Override
@@ -43,11 +42,11 @@ public class SinglePhotoViewFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        photoView = (PhotoView) view.findViewById(R.id.photoview);
-        mAttacher = new PhotoViewAttacher(photoView);
+        mPhotoView = (PhotoView) view.findViewById(R.id.photoview);
+        mAttacher = new PhotoViewAttacher(mPhotoView);
         mAttacher.setRotatable(true);
         mAttacher.setToRightAngle(true);
-        photoView.setOnRotateListener(new PhotoViewAttacher.OnRotateListener() {
+        mPhotoView.setOnRotateListener(new PhotoViewAttacher.OnRotateListener() {
             @Override
             public void onRotate(int degree) {
                 //do something
@@ -57,7 +56,7 @@ public class SinglePhotoViewFragment extends Fragment {
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                photoView.reset();
+                mPhotoView.reset();
             }
         });
     }

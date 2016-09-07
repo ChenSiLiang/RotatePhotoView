@@ -1,13 +1,13 @@
 /**
  * ****************************************************************************
  * Copyright 2011, 2012 Chris Banes.
- * <p>
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,10 +92,12 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private int mScrollEdge = EDGE_BOTH;
     private boolean mZoomEnabled;
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
+    //create by ChenSiLiang
     private boolean mIsEnableRotate;
+    private boolean mIsToRightAngle;
+    private boolean mIsToRighting;
     private int mPivotX, mPivotY;
-    private int mLastAngle = 0;
-    private int mChangeDegrees = 0;
+    private RightAngleRunnable mRightAngleRunnable;
 
     public PhotoViewAttacher(ImageView imageView) {
         this(imageView, true);
@@ -202,6 +204,9 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mRotateGestureDetector.setRotateListener(new IRotateListener() {
                 @Override
                 public void rotate(int degree) {
+                    if (mRightAngleRunnable != null && mIsToRighting) {
+                        getImageView().removeCallbacks(mRightAngleRunnable);
+                    }
                     mSuppMatrix.postRotate(degree, mPivotX, mPivotY);
                     if (mOnRotateListener != null) {
                         mOnRotateListener.onRotate(degree);
@@ -212,12 +217,19 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
                 @Override
                 public void upRotate() {
-                    float[] v = new float[9];
-                    mSuppMatrix.getValues(v);
-                    // calculate the degree of rotation
-                    float angle = Math.round(Math.atan2(v[Matrix.MSKEW_X], v[Matrix.MSCALE_X]) * (180 / Math.PI)) + 180;
-                    UpRotationRunnable runnable = new UpRotationRunnable((int) angle);
-                    getImageView().post(runnable);
+                    if (mIsToRightAngle) {
+                        float[] v = new float[9];
+                        mSuppMatrix.getValues(v);
+                        // calculate the degree of rotation
+                        int angle = (int) (Math.round(Math.atan2(v[Matrix.MSKEW_X], v[Matrix.MSCALE_X]) * (180 / Math.PI)));
+                        if (angle <= 0) {
+                            angle = -angle;
+                        } else {
+                            angle = 360 - angle;
+                        }
+                        mRightAngleRunnable = new RightAngleRunnable(angle);
+                        getImageView().post(mRightAngleRunnable);
+                    }
                 }
             });
         }
@@ -246,6 +258,17 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     public void setRotatable(boolean isRotatable) {
         mIsEnableRotate = isRotatable;
     }
+
+    /**
+     * set the boolean to the rotation to right angle(0,90,180,270 degree) when one finger  up from the screen
+     * Created by ChenSL on 2015/9/16.
+     *
+     * @param toRightAngle true,recover to right angle when one finger lift;false,otherwise.
+     */
+    public void setToRightAngle(boolean toRightAngle) {
+        mIsToRightAngle = toRightAngle;
+    }
+
 
     public void reset() {
         resetMatrix();
@@ -280,7 +303,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             // Remove the ImageView's reference to this
             imageView.setOnTouchListener(null);
 
-            // make sure a pending fling runnable won't be run
+            // make sure a pending fling mRightAngleRunnable won't be run
             cancelFling();
         }
 
@@ -605,6 +628,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             if (mIsEnableRotate && ev.getPointerCount() == 2) {
                 mRotateGestureDetector.onTouchEvent(ev);
             }
+            boolean wasRotate = mRotateGestureDetector.isRotating();
 
             // Try the Scale/Drag detector
             if (null != mScaleDragDetector) {
@@ -615,8 +639,9 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
                 boolean didntScale = !wasScaling && !mScaleDragDetector.isScaling();
                 boolean didntDrag = !wasDragging && !mScaleDragDetector.isDragging();
+                boolean didnttRotate = !wasRotate && !mRotateGestureDetector.isRotating();
 
-                mBlockParentIntercept = didntScale && didntDrag;
+                mBlockParentIntercept = didntScale && didntDrag && didnttRotate;
             }
 
             // Check to see if the user double tapped
@@ -795,6 +820,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         float deltaX = 0, deltaY = 0;
 
         final int viewHeight = getImageViewHeight(imageView);
+
         if (height <= viewHeight) {
             switch (mScaleType) {
                 case FIT_START:
@@ -1008,7 +1034,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnMatrixChangedListener {
+    public interface OnMatrixChangedListener {
         /**
          * Callback for when the Matrix displaying the Drawable has changed. This could be because
          * the View's bounds have changed, or the user has zoomed.
@@ -1023,7 +1049,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Marek Sebera
      */
-    public static interface OnScaleChangeListener {
+    public interface OnScaleChangeListener {
         /**
          * Callback for when the scale changes
          *
@@ -1040,7 +1066,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnPhotoTapListener {
+    public interface OnPhotoTapListener {
 
         /**
          * A callback to receive where the user taps on a photo. You will only receive a callback if
@@ -1061,7 +1087,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author Chris Banes
      */
-    public static interface OnViewTapListener {
+    public interface OnViewTapListener {
 
         /**
          * A callback to receive where the user taps on a ImageView. You will receive a callback if
@@ -1079,7 +1105,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
      *
      * @author ChenSL
      */
-    public static interface OnRotateListener {
+    public interface OnRotateListener {
         /**
          * A callBack to receive when the user rotate a ImageView.You will receive a callback
          * if the user rotate the ImageView
@@ -1221,27 +1247,75 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         }
     }
 
-    private class UpRotationRunnable implements Runnable {
+    /**
+     * a mRightAngleRunnable that finger lift rotate to 0,90,180,270 degree
+     */
+    private class RightAngleRunnable implements Runnable {
+        private static final int RECOVER_SPEED = 4;
         private int mOldDegree;
-        private int mToDegree;
+        private int mNeedToRotate;
 
-        public UpRotationRunnable(int degree) {
+        public RightAngleRunnable(int degree) {
             this.mOldDegree = degree;
-            this.mToDegree = calDegree(degree);
+            mNeedToRotate = calDegree(degree) - mOldDegree;
         }
 
+        /**
+         * get right degree,when one finger lifts
+         *
+         * @param oldDegree current degree
+         * @return 0, 90, 180, 270 according to oldDegree
+         */
         private int calDegree(int oldDegree) {
-            return 0;
+            int result = 0;
+            float n = (float) oldDegree / 45;
+            if (n >= 0 && n < 1) {
+                result = 0;
+            } else if (n >= 1 && n <= 2.5) {
+                result = 90;
+            } else if (n > 2.5 && n < 5.5) {
+                result = 180;
+            } else if (n >= 5.5 && n <= 7) {
+                result = 270;
+            } else {
+                result = 360;
+            }
+            return result;
         }
 
         @Override
         public void run() {
-            if (mOldDegree <= mToDegree) {
-                ImageView imageView = getImageView();
-                mOldDegree++;
-                mSuppMatrix.postRotate(mOldDegree, mPivotX, mPivotY);
-                Compat.postOnAnimation(imageView, this);
+            if (mNeedToRotate == 0) {
+                mIsToRighting = false;
+                return;
             }
+            ImageView imageView = getImageView();
+            if (imageView == null) {
+                mIsToRighting = false;
+                return;
+            }
+            mIsToRighting = true;
+            if (mNeedToRotate > 0) {
+                //Clockwise rotation
+                if (mNeedToRotate >= RECOVER_SPEED) {
+                    mSuppMatrix.postRotate(RECOVER_SPEED, mPivotX, mPivotY);
+                    mNeedToRotate -= RECOVER_SPEED;
+                } else {
+                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mNeedToRotate = 0;
+                }
+            } else if (mNeedToRotate < 0) {
+                //Counterclockwise rotation
+                if (mNeedToRotate <= -RECOVER_SPEED) {
+                    mSuppMatrix.postRotate(-RECOVER_SPEED, mPivotX, mPivotY);
+                    mNeedToRotate += RECOVER_SPEED;
+                } else {
+                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mNeedToRotate = 0;
+                }
+            }
+            checkAndDisplayMatrix();
+            Compat.postOnAnimation(imageView, this);
         }
     }
 }
