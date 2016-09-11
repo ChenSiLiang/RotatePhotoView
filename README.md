@@ -4,10 +4,10 @@ Adding **Rotation with two finger function**  on [PhotoView](https://github.com/
 ![looklike](https://github.com/ChenSiLiang/RotatePhotoView/blob/master/screenshot/viewpager.gif)
 
 #Set Up
-##jar
-download the `RotatePhotoView.jar` and add to your project.
 ##Gradle
-coming very soon. :)
+	compile "com.chensl.rotatephotoview:rotatephotoview:1.0.2"
+
+and don't forget to add jcenter() to repositories
 
 #Usage
 ##in code
