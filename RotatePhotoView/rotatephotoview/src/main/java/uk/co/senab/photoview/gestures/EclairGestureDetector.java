@@ -13,8 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * *****************************************************************************
- */
+ *******************************************************************************/
 package uk.co.senab.photoview.gestures;
 
 import android.annotation.TargetApi;
@@ -24,9 +23,6 @@ import android.view.MotionEvent;
 import uk.co.senab.photoview.Compat;
 
 @TargetApi(5)
-/**
- * dont support double finger to scale api>=8
- */
 public class EclairGestureDetector extends CupcakeGestureDetector {
 
     private static final int INVALID_POINTER_ID = -1;
@@ -86,6 +82,11 @@ public class EclairGestureDetector extends CupcakeGestureDetector {
         mActivePointerIndex = ev
                 .findPointerIndex(mActivePointerId != INVALID_POINTER_ID ? mActivePointerId
                         : 0);
-        return super.onTouchEvent(ev);
+        try {
+            return super.onTouchEvent(ev);
+        } catch (IllegalArgumentException e) {
+            // Fix for support lib bug, happening when onDestroy is
+            return true;
+        }
     }
 }

@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.chensl.rotatephotoview.R;
 
@@ -50,13 +49,6 @@ public class SinglePhotoViewFragment extends Fragment {
             @Override
             public void onRotate(int degree) {
                 //do something
-            }
-        });
-        Button resetBtn = (Button) view.findViewById(R.id.reset_btn);
-        resetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPhotoView.reset();
             }
         });
     }
