@@ -102,6 +102,7 @@ public class ViewPagerPhotoViewFragment extends Fragment {
                     //do something
                 }
             });
+            attacher.update();
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 

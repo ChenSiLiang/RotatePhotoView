@@ -10,7 +10,7 @@ public interface IRotateListener {
      *
      * @param degree degree of rotation
      */
-    void rotate(int degree);
+    void rotate(int degree, int pivotX, int pivotY);
 
     /**
      * MotionEvent.ACTION_POINTER_UP happens when two finger minus to only one

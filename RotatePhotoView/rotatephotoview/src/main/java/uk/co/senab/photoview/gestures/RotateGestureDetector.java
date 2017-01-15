@@ -41,6 +41,8 @@ public class RotateGestureDetector implements IRotateDetector {
             return false;
         }
         //Calculate the angle between the two fingers
+        int pivotX = (int) (ev.getX(0) + ev.getX(1)) / 2;
+        int pivotY = (int) (ev.getY(0) + ev.getY(1)) / 2;
         float deltaX = ev.getX(0) - ev.getX(1);
         float deltaY = ev.getY(0) - ev.getY(1);
         double radians = Math.atan(deltaY / deltaX);
@@ -74,13 +76,13 @@ public class RotateGestureDetector implements IRotateDetector {
                 int degreesValue = degrees - mLastAngle;
                 if (degreesValue > 45) {
                     //Going CCW across the boundary
-                    rotate(-5);
+                    rotate(-5, pivotX, pivotY);
                 } else if (degreesValue < -45) {
                     //Going CW across the boundary
-                    rotate(5);
+                    rotate(5, pivotX, pivotY);
                 } else {
                     //Normal rotation, rotate the difference
-                    rotate(degreesValue);
+                    rotate(degreesValue, pivotX, pivotY);
                 }
                 //Save the current angle
                 mLastAngle = degrees;
@@ -94,9 +96,9 @@ public class RotateGestureDetector implements IRotateDetector {
      *
      * @param degree degree to rotate
      */
-    private void rotate(int degree) {
+    private void rotate(int degree, int pivotX, int pivotY) {
         if (mListener != null) {
-            mListener.rotate(degree);
+            mListener.rotate(degree, pivotX, pivotY);
         }
     }
 

@@ -4,7 +4,7 @@ apply plugin: 'com.jfrog.bintray'
 def siteUrl = 'https://github.com/ChenSiLiang/RotatePhotoView'
 def gitUrl = 'https://github.com/ChenSiLiang/RotatePhotoView.git'
 group = "com.chensl.rotatephotoview" // Maven Group ID for the artifact
-version = "1.0.0"
+version = "1.0.3"
 
 
 android {
@@ -15,7 +15,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 23
         versionCode 1
-        versionName "1.1"
+        versionName "1.0.3"
     }
     buildTypes {
         release {
@@ -25,8 +25,6 @@ android {
     }
 }
 
-group = "com.chensl.rotatephotoview"
-
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper paramters
@@ -34,7 +32,7 @@ install {
             packaging 'aar'
 
             // Add your description here
-            name 'rotatephotoview'
+            name 'rotate-photoview'
             url siteUrl
 
             // Set your license
@@ -93,7 +91,7 @@ bintray {
 
     pkg {
         repo = "maven"
-        name = "rotatephotoview"
+        name = "rotate-photoview"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

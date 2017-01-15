@@ -237,11 +237,11 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             mRotateGestureDetector = new RotateGestureDetector();
             mRotateGestureDetector.setRotateListener(new IRotateListener() {
                 @Override
-                public void rotate(int degree) {
+                public void rotate(int degree, int pivotX, int pivotY) {
                     if (mRightAngleRunnable != null && mIsToRighting) {
                         getImageView().removeCallbacks(mRightAngleRunnable);
                     }
-                    mSuppMatrix.postRotate(degree, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(degree, pivotX, pivotY);
                     if (mOnRotateListener != null) {
                         mOnRotateListener.onRotate(degree);
                     }
