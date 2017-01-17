@@ -250,7 +250,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                 }
 
                 @Override
-                public void upRotate() {
+                public void upRotate(int pivotX, int pivotY) {
                     if (mIsToRightAngle) {
                         float[] v = new float[9];
                         mSuppMatrix.getValues(v);
@@ -261,7 +261,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                         } else {
                             angle = 360 - angle;
                         }
-                        mRightAngleRunnable = new RightAngleRunnable(angle);
+                        mRightAngleRunnable = new RightAngleRunnable(angle, pivotX, pivotY);
                         getImageView().post(mRightAngleRunnable);
                     }
                 }
@@ -1306,10 +1306,14 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         private static final int RECOVER_SPEED = 4;
         private int mOldDegree;
         private int mNeedToRotate;
+        private int mRoPivotX;
+        private int mRoPivotY;
 
-        public RightAngleRunnable(int degree) {
+        RightAngleRunnable(int degree, int pivotX, int pivotY) {
             this.mOldDegree = degree;
-            mNeedToRotate = calDegree(degree) - mOldDegree;
+            this.mNeedToRotate = calDegree(degree) - mOldDegree;
+            this.mRoPivotX = pivotX;
+            this.mRoPivotY = pivotY;
         }
 
         /**
@@ -1319,7 +1323,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
          * @return 0, 90, 180, 270 according to oldDegree
          */
         private int calDegree(int oldDegree) {
-            int result = 0;
+            int result;
             float n = (float) oldDegree / 45;
             if (n >= 0 && n < 1) {
                 result = 0;
@@ -1350,19 +1354,19 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             if (mNeedToRotate > 0) {
                 //Clockwise rotation
                 if (mNeedToRotate >= RECOVER_SPEED) {
-                    mSuppMatrix.postRotate(RECOVER_SPEED, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(RECOVER_SPEED, mRoPivotX, mRoPivotY);
                     mNeedToRotate -= RECOVER_SPEED;
                 } else {
-                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(mNeedToRotate, mRoPivotX, mRoPivotY);
                     mNeedToRotate = 0;
                 }
             } else if (mNeedToRotate < 0) {
                 //Counterclockwise rotation
                 if (mNeedToRotate <= -RECOVER_SPEED) {
-                    mSuppMatrix.postRotate(-RECOVER_SPEED, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(-RECOVER_SPEED, mRoPivotX, mRoPivotY);
                     mNeedToRotate += RECOVER_SPEED;
                 } else {
-                    mSuppMatrix.postRotate(mNeedToRotate, mPivotX, mPivotY);
+                    mSuppMatrix.postRotate(mNeedToRotate, mRoPivotX, mRoPivotY);
                     mNeedToRotate = 0;
                 }
             }

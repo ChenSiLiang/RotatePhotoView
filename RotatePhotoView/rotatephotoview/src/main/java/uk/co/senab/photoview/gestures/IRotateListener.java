@@ -16,5 +16,5 @@ public interface IRotateListener {
      * MotionEvent.ACTION_POINTER_UP happens when two finger minus to only one
      * change the ImageView to 0,90,180,270
      */
-    void upRotate();
+    void upRotate(int pivotX, int pivotY);
 }

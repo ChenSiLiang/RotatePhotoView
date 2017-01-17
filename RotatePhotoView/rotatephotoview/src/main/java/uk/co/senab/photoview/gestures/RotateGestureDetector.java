@@ -68,7 +68,7 @@ public class RotateGestureDetector implements IRotateDetector {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_POINTER_UP:
                 mIsRotate = false;
-                upRotate();
+                upRotate(pivotX, pivotY);
                 mLastAngle = degrees;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -105,9 +105,9 @@ public class RotateGestureDetector implements IRotateDetector {
     /**
      * to invoke the finger up action
      */
-    private void upRotate() {
+    private void upRotate(int pivotX, int pivotY) {
         if (mListener != null) {
-            mListener.upRotate();
+            mListener.upRotate(pivotX, pivotY);
         }
     }
 }
