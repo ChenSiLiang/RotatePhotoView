@@ -60,14 +60,14 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG);
 
     private Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
-    int ZOOM_DURATION = DEFAULT_ZOOM_DURATION;
+    private int ZOOM_DURATION = DEFAULT_ZOOM_DURATION;
 
-    static final int EDGE_NONE = -1;
-    static final int EDGE_LEFT = 0;
-    static final int EDGE_RIGHT = 1;
-    static final int EDGE_BOTH = 2;
+    private static final int EDGE_NONE = -1;
+    private static final int EDGE_LEFT = 0;
+    private static final int EDGE_RIGHT = 1;
+    private static final int EDGE_BOTH = 2;
 
-    static int SINGLE_TOUCH = 1;
+    private static int SINGLE_TOUCH = 1;
 
     private float mMinScale = DEFAULT_MIN_SCALE;
     private float mMidScale = DEFAULT_MID_SCALE;
@@ -162,7 +162,6 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private boolean mIsEnableRotate;
     private boolean mIsToRightAngle;
     private boolean mIsToRighting;
-    private int mPivotX, mPivotY;
     private RightAngleRunnable mRightAngleRunnable;
 
     public PhotoViewAttacher(ImageView imageView) {
@@ -889,9 +888,6 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         // Finally actually translate the matrix
         mSuppMatrix.postTranslate(deltaX, deltaY);
 
-        //set the rotate pivot
-        mPivotX = (int) (width / 2);
-        mPivotY = (int) (height / 2);
         return true;
     }
 

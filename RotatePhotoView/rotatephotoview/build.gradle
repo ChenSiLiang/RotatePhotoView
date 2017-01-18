@@ -4,18 +4,18 @@ apply plugin: 'com.jfrog.bintray'
 def siteUrl = 'https://github.com/ChenSiLiang/RotatePhotoView'
 def gitUrl = 'https://github.com/ChenSiLiang/RotatePhotoView.git'
 group = "com.chensl.rotatephotoview" // Maven Group ID for the artifact
-version = "1.0.3"
+version = "1.0.4"
 
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.4"
     }
     buildTypes {
         release {
