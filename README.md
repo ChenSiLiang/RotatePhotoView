@@ -5,7 +5,7 @@ Adding **Rotation with two finger function**  on [PhotoView](https://github.com/
 
 #Set Up
 ##Gradle
-	compile "com.chensl.rotatephotoview:rotatephotoview:1.0.3"
+	compile "com.chensl.rotatephotoview:rotatephotoview:1.0.5"
 
 and don't forget to add jcenter() to repositories
 
