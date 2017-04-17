@@ -3,14 +3,14 @@ Adding **Rotation with two finger function**  on [PhotoView](https://github.com/
 
 ![looklike](https://github.com/ChenSiLiang/RotatePhotoView/blob/master/screenshot/viewpager.gif)
 
-#Set Up
-##Gradle
+# Set Up
+## Gradle
 	compile "com.chensl.rotatephotoview:rotatephotoview:1.0.5"
 
 and don't forget to add jcenter() to repositories
 
-#Usage
-##in code
+# Usage
+## in code
 you need to enable rotation, by default it's **false**.
 
 	PhotoViewAttacher attacher = new PhotoViewAttacher(mImageView);
@@ -40,20 +40,20 @@ don't forget to **clear** when leave,for example.
         attacher.cleanup();
         super.onDestroy();
     }
-##in xml
+## in xml
 	 <uk.co.senab.photoview.PhotoView
         android:id="@+id/photoview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-#With Volley
+# With Volley
 let the `PhotoView` extends `Volley.NetworkImageView` instead of `ImageView`.
 
-#Waring
+# Waring
 Catch `IllegalArgumentException` when working with `ViewPager`,see `HackyViewPager` for more details. 
 
 
-#License
+# License
 	Copyright 2011, 2012 Chris Banes
 	
 	Licensed under the Apache License, Version 2.0 (the "License");
